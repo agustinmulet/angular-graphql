@@ -1,0 +1,24 @@
+<div class="content" role="main">
+  <div *ngIf="loading">
+    <h2>Loading User...</h2>
+  </div>
+  <div *ngIf="error">
+    There was an error 😢
+  </div>
+  <div *ngIf="user">
+    <div class="card-container">
+      <h2>{{ user.name }}</h2>
+      <h3>{{ user.address }}</h3>
+      <p>{{ user.birthday }}</p>
+      <div class="posts">
+        <h6>Posts</h6>
+        <ul *ngFor="let post of user.posts">
+          <li>{{ post.title }}</li>
+        </ul>
+        <div *ngIf="!user.posts.length">
+          No posts yet!
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

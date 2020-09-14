@@ -1,27 +1,28 @@
-# RoutingApp
+# Angular + Apollo GraphQL
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 10.0.8.
+Sample repo to show the implementation of Apollo GraphQL to a simple form that only Reads, Creates and Deletes data, no Update, sorry.
+Created for the talk `GraphQL 101: From backend to frontend` for Cognizant Softvision Programmer's week.
 
-## Development server
+---
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Usage
 
-## Code scaffolding
+Well, usage or something like that, there are a couple of branches to see how to add Read, Create and Delete. These steps have each their own branch, which are:
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+`01-read-all`, `02-read-single`, `03-create` and `04-delete`
 
-## Build
+`master` is the starting point with a json-server used as a REST API.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+To run the app + server: `npm run dev` or `yarn dev`.
 
-## Running unit tests
+To change to each branch:
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```
+git branch checkout 01-read-all
 
-## Running end-to-end tests
+git branch checkout 02-read-single
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+git branch checkout 03-create
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+git branch checkout 04-delete
+```

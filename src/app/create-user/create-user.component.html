@@ -1,0 +1,19 @@
+<div class="content" role="main">
+  <h2>Add new user to the database:</h2>
+  <form #form="ngForm" (ngSubmit)="submitForm(form)" class="card-container">
+    <div *ngIf="success" class="success">User created!</div>
+    <label>id:</label>
+    <input type="text" name="id" ngModel>
+
+    <label>Name:</label>
+    <input type="text" name="name" ngModel>
+
+    <label>Address:</label>
+    <input type="text" name="address" ngModel>
+
+    <label>Birthday:</label>
+    <input type="text" name="birthday" ngModel>
+
+    <button type="submit">Submit</button>
+  </form>
+</div>

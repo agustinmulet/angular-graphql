@@ -1,0 +1,19 @@
+<div class="content" role="main">
+  <div *ngIf="loading">
+    <h2>Loading Users List...</h2>
+  </div>
+  <div *ngIf="error">
+    There was an error 😢
+  </div>
+  <div *ngIf="users">
+    <h2>Users List</h2>
+    <p>This is a list with all the users:</p>
+    <div class="card-container" *ngFor="let user of users">
+      <a class="card" [routerLink]="['../user/' + user.id ]" routerLinkActive="active">
+      <!-- <a class="card" routerLink="../users" routerLinkActive="active"> -->
+        <span>{{ user.name }}</span>
+        <svg class="material-icons" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
