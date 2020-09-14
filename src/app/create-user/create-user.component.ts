@@ -1,34 +1,45 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
 
-const wait = (cb) => (setTimeout(cb, 3000));
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-create-user',
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.css']
 })
-export class CreateUserComponent implements OnInit {
+export class CreateUserComponent {
   success = false;
-  constructor(private http: HttpClient) { }
+  constructor(private apollo: Apollo) { }
 
   submitForm(form: any) {
-    this.http.post<any>(
-      'http://localhost:3000/users/',
-      {
-        ...form.value,
-        posts: []
+    this.apollo.mutate({
+      mutation: gql`
+        mutation addUser ($name: String!, $address: String!, $birthday: String!) {
+          addUser(name: $name, address: $address, birthday: $birthday)
+          {
+            id
+            name
+            address
+            birthday
+            posts {
+              id
+              title
+            }
+          }
+        }
+      `,
+      variables: {
+        ...form.value
       }
-    )
-    .subscribe(data => {
+    })
+    .subscribe(({ data }) => {
       this.success = true;
       console.log(data);
       form.resetForm();
-      wait(() => this.success = false);
+      setTimeout(() => this.success = false, 3000);
+    }, (error) => {
+      console.log('there was an error with the query', error);
     });
   }
-
-  ngOnInit(): void {
-  }
-
 }
