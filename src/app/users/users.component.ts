@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
-const wait = (cb) => (setTimeout(cb, 2000));
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-users',
@@ -12,15 +11,25 @@ export class UsersComponent implements OnInit {
   users: any[];
   error: any;
   loading = true;
-  constructor(private http: HttpClient) { }
+  constructor(private apollo: Apollo) { }
 
   ngOnInit(): void {
-    this.http.get<any>('http://localhost:3000/users').subscribe(data => {
-      wait(() => {
-        this.users = data;
-        this.loading = false;
-      });
-    });
+    this.apollo
+      .watchQuery({
+        query: gql`
+          {
+            users {
+              id
+              name
+            }
+          }
+        `
+      })
+      .valueChanges.subscribe((result: any) => {
+        this.users = result.data?.users;
+        this.loading = result.loading;
+        this.error = result.error;
+      })
   }
 
 }
