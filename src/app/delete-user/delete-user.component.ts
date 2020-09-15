@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 
-const wait = (cb) => (setTimeout(cb, 2000));
+import { Apollo } from 'apollo-angular';
+import gql from 'graphql-tag';
 
 @Component({
   selector: 'app-delete-user',
@@ -12,25 +12,56 @@ export class DeleteUserComponent implements OnInit {
   users: any[];
   error: any;
   loading = true;
-  constructor(private http: HttpClient) { }
+  GET_USERS = gql`
+    {
+      users {
+        id
+        name
+      }
+    }
+  `
+  constructor(private apollo: Apollo) { }
 
-  deleteUser(user: any) {
-    this.loading = true;
+  deleteUser(user: any): void {
     const { id } = user;
-    this.http.delete<any>(`http://localhost:3000/users/${user.id}`).subscribe(data => {
-      wait(() => {
-        this.users = this.users.filter(myUser => myUser.id !== id);
-        this.loading = false;
-      });
+    this.apollo.mutate({
+      mutation: gql`
+        mutation deleteUser ($id: String!) {
+          deleteUser(id: $id)
+        }
+      `,
+      variables: {
+        id
+      },
+      update: (cache, { data }: any) => {
+        // Fetch the users from the cache
+        const existingUsers: any = cache.readQuery({
+          query: this.GET_USERS
+        });
+        // Generate an array without the deleted user and update cache
+        const newUsers = existingUsers.users.filter((aUser: any) => aUser.id !== data.deleteUser);
+        cache.writeQuery({
+          query: this.GET_USERS,
+          data: {users: [...newUsers]}
+        });
+      }
+    })
+    .subscribe(({ data }) => {
+      console.log(data);
+    }, (error) => {
+      console.log('there was an error with the query', error);
     });
   }
 
   ngOnInit(): void {
-    this.http.get<any>('http://localhost:3000/users/').subscribe(data => {
-      wait(() => {
-        this.users = data;
-        this.loading = false;
+    this.apollo
+      .watchQuery({
+        query: this.GET_USERS
+      })
+      .valueChanges.subscribe((result: any) => {
+        this.users = result.data?.users;
+        this.loading = result.loading;
+        this.error = result.error;
       });
-    });
   }
 }
