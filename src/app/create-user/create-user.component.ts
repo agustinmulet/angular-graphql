@@ -12,7 +12,7 @@ export class CreateUserComponent {
   success = false;
   constructor(private apollo: Apollo) { }
 
-  submitForm(form: any) {
+  submitForm(form: any): void {
     this.apollo.mutate({
       mutation: gql`
         mutation addUser ($name: String!, $address: String!, $birthday: String!) {
@@ -31,6 +31,33 @@ export class CreateUserComponent {
       `,
       variables: {
         ...form.value
+      },
+      update: (cache, {data}: any) => {
+        //Modify cache directly with a graphql fragment
+        cache.modify({
+          fields: {
+            users(existingUsers = []): any[] {
+              const newUser = cache.writeFragment({
+                data: data.addUser,
+                fragment: gql`
+                  fragment NewUser on users {
+                    id
+                    name
+                    address
+                    birthday
+                    posts {
+                      id
+                      title
+                      content
+                      comments
+                    }
+                  }
+                `
+              });
+              return [...existingUsers, newUser];
+            }
+          }
+        });
       }
     })
     .subscribe(({ data }) => {
